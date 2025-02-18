@@ -24,6 +24,9 @@ func main() {
     mux := http.NewServeMux()
 	problemModel := problems.NewModel(db)
 
+    staticFileServer := http.FileServer(http.Dir("./static"))
+    mux.Handle("GET /static/", http.StripPrefix("/static", staticFileServer))
+
     problemService := problems.NewService(problemModel)
     problemService.Register(mux)
 

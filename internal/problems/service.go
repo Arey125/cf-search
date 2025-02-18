@@ -1,6 +1,10 @@
 package problems
 
-import "net/http"
+import (
+	"net/http"
+
+	"github.com/a-h/templ"
+)
 
 type Service struct {
 	model ProblemModel
@@ -11,7 +15,5 @@ func NewService(model ProblemModel) Service {
 }
 
 func (s Service) Register(mux *http.ServeMux) {
-    mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-        w.Write([]byte("Test"))
-    })
+	mux.HandleFunc("/", templ.Handler(List()))
 }

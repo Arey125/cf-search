@@ -1,0 +1,16 @@
+package problems
+
+import "cf-search/internal/ui"
+import "net/http"
+
+func ListPage(w http.ResponseWriter, r *http.Request) {
+
+}
+
+templ List() {
+	@ui.Base() {
+		<div class="content">
+			<h1>Problems</h1>
+		</div>
+	}
+}
