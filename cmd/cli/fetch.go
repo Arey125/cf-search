@@ -5,8 +5,6 @@ import (
 	"io"
 	"net/http"
 
-	_ "github.com/joho/godotenv/autoload"
-
 	"cf-search/internal/problems"
 )
 

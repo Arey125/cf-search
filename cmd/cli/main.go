@@ -6,7 +6,7 @@ import (
 
 	_ "github.com/joho/godotenv/autoload"
 
-	"cf-search/internal/db"
+	database "cf-search/internal/db"
 	"cf-search/internal/problems"
 )
 
@@ -19,7 +19,7 @@ func main() {
     fmt.Printf("%d problems fetched\n", len(pr))
 
     dsn := os.Getenv("DB")
-    db := db.Connect(dsn)
+    db := database.Connect(dsn)
 
     problemModel := problems.NewModel(db)
     err = problemModel.AddMany(pr)
