@@ -22,8 +22,9 @@ func (s Service) listPage(w http.ResponseWriter, r *http.Request) {
 		s.PartialProblemListHandler(w, r)
 		return
 	}
+	filters := filtersFromRequest(r)
 
-	problems, err := s.model.GetPage(0)
+	problems, err := s.model.GetPage(0, filters)
 	if err != nil {
 		serverErrorHandler(w, r, err)
 	}
@@ -39,7 +40,7 @@ func (s Service) PartialProblemListHandler(w http.ResponseWriter, r *http.Reques
 		serverErrorHandler(w, r, err)
 	}
 
-	problems, err := s.model.GetPage(page)
+	problems, err := s.model.GetPage(page, Filters{})
 	if err != nil {
 		serverErrorHandler(w, r, err)
 	}
@@ -75,7 +76,18 @@ templ List(problems []Problem) {
 	@ui.Base() {
 		<div class="content problem-list">
 			<h1>Problems</h1>
-			@partialProblemList(problems, 0)
+			<input
+				id="search"
+				name="search"
+				class="input"
+				type="text"
+                hx-post="/?page=0"
+                hx-trigger="input changed"
+                hx-target="#problems"
+			/>
+            <div id="problems">
+                @partialProblemList(problems, 0)
+            </div>
 		</div>
 	}
 }

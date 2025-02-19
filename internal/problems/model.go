@@ -2,6 +2,7 @@ package problems
 
 import (
 	"database/sql"
+	"fmt"
 	"strings"
 
 	sq "github.com/Masterminds/squirrel"
@@ -105,10 +106,11 @@ func (m ProblemModel) AddMany(problems []Problem) error {
 	return nil
 }
 
-func (m ProblemModel) GetPage(page int) ([]Problem, error) {
+func (m ProblemModel) GetPage(page int, filter Filters) ([]Problem, error) {
 	pageSize := 100
 	q := sq.Select(columns...).
 		From("problems").
+        Where(sq.Like{"name": fmt.Sprintf("%%%s%%", filter.search)}).
 		Limit(uint64(pageSize)).
 		Offset(uint64(pageSize * page))
 
