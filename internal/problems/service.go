@@ -15,5 +15,5 @@ func NewService(model ProblemModel) Service {
 }
 
 func (s Service) Register(mux *http.ServeMux) {
-	mux.HandleFunc("/", s.ListPage)
+	mux.HandleFunc("/", s.listPage)
 }

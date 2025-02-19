@@ -1,5 +1,5 @@
 .logo {
-  padding: 6px 12px 0 12px;
+  padding: 6px 16px 0 16px;
 
   font-size: 24px;
   font-weight: 600;
@@ -7,6 +7,19 @@
   color: #eee;
 }
 
+.navbar {
+  border-bottom: 1px solid #111
+}
+
 .problem-list {
   padding-bottom: 20px;
+}
+
+.problem-tags {
+  display: flex;
+  gap: 8px;
+  
+  .tags {
+    margin-bottom: 0;
+  }
 }

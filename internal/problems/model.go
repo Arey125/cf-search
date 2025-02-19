@@ -40,6 +40,7 @@ var columns []string = []string{
 func scanProblem(rows *sql.Rows) (*Problem, error) {
 	problem := Problem{}
 	var tagString string
+    rating := sql.NullInt32{}
 	err := rows.Scan(
 		&problem.ContestId,
 		&problem.ProblemsetName,
@@ -47,10 +48,16 @@ func scanProblem(rows *sql.Rows) (*Problem, error) {
 		&problem.Name,
 		&problem.Type,
 		&problem.Points,
-		&problem.Rating,
+		&rating,
 		&tagString,
 	)
-	problem.Tags = strings.Split(tagString, ", ")
+	if tagString != "" {
+		problem.Tags = strings.Split(tagString, ", ")
+	}
+    if rating.Valid {
+        r := int(rating.Int32)
+        problem.Rating = &r
+    }
 
 	if err != nil {
 		return nil, err
@@ -63,7 +70,6 @@ func (m ProblemModel) addBatch(problems []Problem) error {
 	q := sq.Insert("problems").
 		Columns(columns...)
 	for _, p := range problems {
-
 		q = q.Values(
 			p.ContestId,
 			p.ProblemsetName,

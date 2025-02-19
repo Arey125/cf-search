@@ -1,3 +1,4 @@
+include .env
 BIN = cf-search
 CLIBIN = cf-search
 
@@ -13,3 +14,6 @@ run: all
 
 run-cli: cli-build
 	@./bin/$(CLIBIN)
+
+sqlite:
+	@sqlite3 $(DB)
