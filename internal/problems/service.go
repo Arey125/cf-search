@@ -1,19 +1,19 @@
 package problems
 
 import (
+	"github.com/donseba/go-htmx"
 	"net/http"
-
-	"github.com/a-h/templ"
 )
 
 type Service struct {
 	model ProblemModel
+	htmx     *htmx.HTMX
 }
 
 func NewService(model ProblemModel) Service {
-	return Service{model}
+	return Service{model, htmx.New()}
 }
 
 func (s Service) Register(mux *http.ServeMux) {
-	mux.HandleFunc("/", templ.Handler(List()))
+	mux.HandleFunc("/", s.ListPage)
 }

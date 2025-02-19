@@ -1,16 +1,67 @@
 package problems
 
-import "cf-search/internal/ui"
-import "net/http"
+import (
+	"cf-search/internal/ui"
+	"fmt"
+	"net/http"
+	"strconv"
+)
 
-func ListPage(w http.ResponseWriter, r *http.Request) {
-
+func errorHandler(w http.ResponseWriter, r *http.Request, status int) {
+	w.WriteHeader(status)
 }
 
-templ List() {
+func serverErrorHandler(w http.ResponseWriter, r *http.Request, err error) {
+	fmt.Println(err)
+	w.WriteHeader(http.StatusInternalServerError)
+}
+
+func (s Service) ListPage(w http.ResponseWriter, r *http.Request) {
+	h := s.htmx.NewHandler(w, r)
+	if h.IsHxRequest() {
+        s.PartialProblemListHandler(w, r)
+        return;
+	}
+
+	problems, err := s.model.GetPage(0)
+	if err != nil {
+		serverErrorHandler(w, r, err)
+	}
+	err = List(problems).Render(r.Context(), w)
+	if err != nil {
+		serverErrorHandler(w, r, err)
+	}
+}
+
+func (s Service) PartialProblemListHandler(w http.ResponseWriter, r *http.Request) {
+		page, err := strconv.Atoi(r.URL.Query().Get("page"))
+		if err != nil {
+			serverErrorHandler(w, r, err)
+		}
+
+        problems, err := s.model.GetPage(page)
+        if err != nil {
+            serverErrorHandler(w, r, err)
+        }
+
+		err = partialProblemList(problems, page).Render(r.Context(), w)
+		if err != nil {
+			serverErrorHandler(w, r, err)
+		}
+}
+
+templ partialProblemList(problems []Problem, page int) {
+	for _, problem := range problems {
+		<div>{ problem.Name } </div>
+	}
+    <div hx-get={fmt.Sprintf("/?page=%d", page + 1)} hx-trigger="revealed" hx-swap="outerHTML" />
+}
+
+templ List(problems []Problem) {
 	@ui.Base() {
-		<div class="content">
+		<div class="content problem-list">
 			<h1>Problems</h1>
+			@partialProblemList(problems, 0)
 		</div>
 	}
 }

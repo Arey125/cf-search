@@ -39,6 +39,7 @@ var columns []string = []string{
 
 func scanProblem(rows *sql.Rows) (*Problem, error) {
 	problem := Problem{}
+	var tagString string
 	err := rows.Scan(
 		&problem.ContestId,
 		&problem.ProblemsetName,
@@ -47,8 +48,10 @@ func scanProblem(rows *sql.Rows) (*Problem, error) {
 		&problem.Type,
 		&problem.Points,
 		&problem.Rating,
-		&problem.Tags,
+		&tagString,
 	)
+	problem.Tags = strings.Split(tagString, ", ")
+
 	if err != nil {
 		return nil, err
 	}
@@ -97,9 +100,11 @@ func (m ProblemModel) AddMany(problems []Problem) error {
 }
 
 func (m ProblemModel) GetPage(page int) ([]Problem, error) {
-	q := sq.Select("problems").
-		Columns(columns...).
-		Limit(100)
+	pageSize := 100
+	q := sq.Select(columns...).
+		From("problems").
+		Limit(uint64(pageSize)).
+		Offset(uint64(pageSize * page))
 
 	rows, err := q.RunWith(m.db).Query()
 	if err != nil {
@@ -111,10 +116,10 @@ func (m ProblemModel) GetPage(page int) ([]Problem, error) {
 	for rows.Next() {
 		problem, err := scanProblem(rows)
 		if err != nil {
-            return nil, err
+			return nil, err
 		}
-        problems = append(problems, *problem)
+		problems = append(problems, *problem)
 	}
 
-	return []Problem{}, nil
+	return problems, nil
 }
