@@ -106,28 +106,27 @@ func (m ProblemModel) AddMany(problems []Problem) error {
 	return nil
 }
 
-func (m ProblemModel) GetPage(page int, filter Filters) ([]Problem, error) {
+func (m ProblemModel) GetPage(page int, filters Filters) (problems []Problem,last bool,err error) {
 	pageSize := 100
 	q := sq.Select(columns...).
 		From("problems").
-        Where(sq.Like{"name": fmt.Sprintf("%%%s%%", filter.search)}).
+        Where(sq.Like{"name": fmt.Sprintf("%%%s%%", filters.search)}).
 		Limit(uint64(pageSize)).
 		Offset(uint64(pageSize * page))
-
+    
 	rows, err := q.RunWith(m.db).Query()
 	if err != nil {
-		return nil, err
+		return nil, true, err
 	}
 	defer rows.Close()
 
-	problems := []Problem{}
 	for rows.Next() {
 		problem, err := scanProblem(rows)
 		if err != nil {
-			return nil, err
+			return nil,false, err
 		}
 		problems = append(problems, *problem)
 	}
 
-	return problems, nil
+	return problems, len(problems) < pageSize, nil
 }
