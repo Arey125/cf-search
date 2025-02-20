@@ -28,7 +28,7 @@ func (s Service) listPage(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		serverErrorHandler(w, err)
 	}
-	err = List(problems, last).Render(r.Context(), w)
+	err = list(problems, last).Render(r.Context(), w)
 	if err != nil {
 		serverErrorHandler(w, err)
 	}
@@ -80,23 +80,50 @@ templ partialProblemList(problems []Problem, page int, last bool) {
 	}
 }
 
-templ List(problems []Problem, last bool) {
+templ list(problems []Problem, last bool) {
 	@ui.Base() {
-		<div class="content problem-list">
-			<h1>Problems</h1>
-			<input
-				id="search"
-				name="search"
-				class="input filter"
-				type="text"
-				hx-post="/?page=0"
-				hx-trigger="input changed delay:100ms, keyup[key=='Enter']"
-				hx-target="#problems"
-			/>
-			<div id="problems">
-				@partialProblemList(problems, 0, last)
+		<main class="problems-main">
+			<div class="sidebar">
+				<div class="card">
+					<div class="filters">
+						<h1 class="title">Filters</h1>
+						<label class="checkbox">
+							<input
+								type="checkbox"
+								class="filter"
+								name="rated"
+								hx-post="/?page=0"
+								hx-target="#problems"
+								hx-include=".filter"
+							/>
+							Rated
+						</label>
+					</div>
+				</div>
 			</div>
-		</div>
+			<div class="container">
+				<div class="top-content">
+					<div class="content">
+						<h1>Problems</h1>
+						<input
+							id="search"
+							name="search"
+							class="input filter"
+							type="text"
+							hx-post="/?page=0"
+							hx-trigger="input changed delay:100ms, keyup[key=='Enter']"
+							hx-target="#problems"
+							hx-include=".filter"
+						/>
+					</div>
+				</div>
+				<div class="content problem-list">
+					<div id="problems">
+						@partialProblemList(problems, 0, last)
+					</div>
+				</div>
+			</div>
+		</main>
 	}
 }
 

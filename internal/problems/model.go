@@ -107,10 +107,16 @@ func (m ProblemModel) AddMany(problems []Problem) error {
 }
 
 func (m ProblemModel) GetPage(page int, filters Filters) (problems []Problem,last bool,err error) {
-	pageSize := 100
+	pageSize := 20
 	q := sq.Select(columns...).
 		From("problems").
-        Where(sq.Like{"name": fmt.Sprintf("%%%s%%", filters.search)}).
+        Where(sq.Like{"name": fmt.Sprintf("%%%s%%", filters.search)})
+
+    if filters.rated {
+        q = q.Where(sq.NotEq{"rating": nil})
+    }
+
+    q = q.
 		Limit(uint64(pageSize)).
 		Offset(uint64(pageSize * page))
     
