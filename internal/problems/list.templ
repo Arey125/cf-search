@@ -54,21 +54,7 @@ func (s Service) PartialProblemListHandler(w http.ResponseWriter, r *http.Reques
 
 templ partialProblemList(problems []Problem, page int, last bool) {
 	for _, problem := range problems {
-		<div class="card">
-			<div class="card-header">
-				<div class="card-header-title">{ problem.Name }</div>
-			</div>
-			<div class="card-content">
-				<div class="problem-tags">
-					@rating(problem.Rating)
-					for _, tag := range problem.Tags {
-						<span class="tag">
-							{ tag }
-						</span>
-					}
-				</div>
-			</div>
-		</div>
+        @problemCard(problem)
 	}
 	if !last {
 		<div
@@ -117,18 +103,5 @@ templ list(problems []Problem, last bool) {
 				</div>
 			</div>
 		</main>
-	}
-}
-
-templ rating(rating *int) {
-	if rating != nil {
-		<span class="tags has-addons">
-			<span class="tag is-success">
-				Rating
-			</span>
-			<span class="tag">
-				{ fmt.Sprintf("%d", *rating) }
-			</span>
-		</span>
 	}
 }

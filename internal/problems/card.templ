@@ -1,0 +1,57 @@
+package problems
+
+import "fmt"
+
+templ problemCard(problem Problem) {
+	<div class="card">
+		<div class="card-header">
+			<div class="card-header-title">
+				{ problem.Name }
+				@externalLink(problem)
+			</div>
+		</div>
+		<div class="card-content">
+			<div class="problem-tags">
+				@rating(problem.Rating)
+				for _, tag := range problem.Tags {
+					<span class="tag">
+						{ tag }
+					</span>
+				}
+			</div>
+		</div>
+	</div>
+}
+
+templ rating(rating *int) {
+	if rating != nil {
+		<span class="tags has-addons">
+			<span class="tag is-success">
+				Rating
+			</span>
+			<span class="tag">
+				{ fmt.Sprintf("%d", *rating) }
+			</span>
+		</span>
+	}
+}
+
+templ externalLink(problem Problem) {
+	if problem.ContestId != 0 {
+		<a
+			class="button is-small external-link is-ghost"
+			href={ templ.SafeURL(
+            fmt.Sprintf("https://codeforces.com/contest/%d/problem/%s",
+            problem.ContestId,
+            problem.Index)) }
+		>
+			<span class="icon is-small">
+				<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-external-link">
+					<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+					<polyline points="15 3 21 3 21 9"></polyline>
+					<line x1="10" y1="14" x2="21" y2="3"></line>
+				</svg>
+			</span>
+		</a>
+	}
+}
