@@ -1,0 +1,17 @@
+package ui
+
+templ Checkbox(name string, title string) {
+	<div class="checkboxes">
+		<label class="checkbox">
+			<input
+				type="checkbox"
+				class="filter"
+				name={ name }
+				hx-post="/?page=0"
+				hx-target="#problems"
+				hx-include=".filter"
+			/>
+			{ title }
+		</label>
+	</div>
+}

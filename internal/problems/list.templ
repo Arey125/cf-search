@@ -87,17 +87,7 @@ templ list(problems []Problem, last bool) {
 				<div class="card">
 					<div class="filters">
 						<h1 class="title">Filters</h1>
-						<label class="checkbox">
-							<input
-								type="checkbox"
-								class="filter"
-								name="rated"
-								hx-post="/?page=0"
-								hx-target="#problems"
-								hx-include=".filter"
-							/>
-							Rated
-						</label>
+						@ui.Checkbox("rated", "Rated")
 					</div>
 				</div>
 			</div>
