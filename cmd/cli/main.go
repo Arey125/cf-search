@@ -22,6 +22,11 @@ func main() {
     db := database.Connect(dsn)
 
     problemModel := problems.NewModel(db)
+
+    err = problemModel.DeleteAll()
+    if err != nil {
+        panic(err)
+    }
     err = problemModel.AddMany(pr)
     if err != nil {
         panic(err)

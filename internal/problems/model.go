@@ -90,6 +90,12 @@ func (m ProblemModel) addBatch(problems []Problem) error {
 	return nil
 }
 
+func (m ProblemModel) DeleteAll() error {
+    q := sq.Delete("problems")
+    _, err :=  q.RunWith(m.db).Exec()
+    return err
+}
+
 func (m ProblemModel) AddMany(problems []Problem) error {
 	batchSize := 500
 
