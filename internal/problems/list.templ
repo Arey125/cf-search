@@ -58,7 +58,7 @@ templ partialProblemList(problems []Problem, page int, last bool) {
 	}
 	if !last {
 		<div
-			hx-post={ fmt.Sprintf("/?page=%d", page+1) }
+			hx-get={ fmt.Sprintf("/?page=%d", page+1) }
 			hx-swap="outerHTML"
 			hx-include=".filter"
             hx-trigger="revealed"
@@ -89,7 +89,7 @@ templ list(problems []Problem, last bool) {
 							name="search"
 							class="input filter"
 							type="text"
-							hx-post="/?page=0"
+							hx-get="/?page=0"
 							hx-trigger="input changed delay:100ms, keyup[key=='Enter']"
 							hx-target="#problems"
 							hx-include=".filter"

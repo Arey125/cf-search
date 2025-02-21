@@ -7,7 +7,7 @@ templ Checkbox(name string, title string) {
 				type="checkbox"
 				class="filter"
 				name={ name }
-				hx-post="/?page=0"
+				hx-get="/?page=0"
 				hx-target="#problems"
 				hx-include=".filter"
 			/>
