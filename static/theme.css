@@ -65,3 +65,7 @@
 .filters {
   padding: 30px;
 }
+
+.skeleton-card {
+  height: 120px;
+}
