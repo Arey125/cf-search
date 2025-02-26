@@ -122,6 +122,14 @@ func (m ProblemModel) GetPage(page int, filters Filters) (problems []Problem,las
         q = q.Where(sq.NotEq{"rating": nil})
     }
 
+    if filters.minRating != nil {
+        q = q.Where(sq.GtOrEq{"rating": filters.minRating })
+    }
+
+    if filters.maxRating != nil {
+        q = q.Where(sq.LtOrEq{"rating": filters.maxRating })
+    }
+
     q = q.
 		Limit(uint64(pageSize)).
 		Offset(uint64(pageSize * page))

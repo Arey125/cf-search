@@ -54,16 +54,16 @@ func (s Service) PartialProblemListHandler(w http.ResponseWriter, r *http.Reques
 
 templ partialProblemList(problems []Problem, page int, last bool) {
 	for _, problem := range problems {
-        @problemCard(problem)
+		@problemCard(problem)
 	}
 	if !last {
 		<div
 			hx-get={ fmt.Sprintf("/?page=%d", page+1) }
 			hx-swap="outerHTML"
-			hx-include=".filter"
-            hx-trigger="revealed"
-            class="card skeleton-card"
-		/>
+			hx-include="[data-filter]"
+			hx-trigger="revealed"
+			class="card skeleton-card"
+		></div>
 	}
 }
 
@@ -74,9 +74,13 @@ templ list(problems []Problem, last bool) {
 				<div class="card">
 					<div
 						class="filters"
+						x-data="{rated: false}"
 					>
 						<h1 class="title">Filters</h1>
-						@ui.Checkbox("rated", "Rated")
+						<div class="filter-inputs">
+							@checkbox("rated", "Rated")
+							@rangeInput("rating", "Rating")
+						</div>
 					</div>
 				</div>
 			</div>
@@ -87,12 +91,13 @@ templ list(problems []Problem, last bool) {
 						<input
 							id="search"
 							name="search"
-							class="input filter"
+							class="input"
 							type="text"
 							hx-get="/?page=0"
 							hx-trigger="input changed delay:100ms, keyup[key=='Enter']"
 							hx-target="#problems"
-							hx-include=".filter"
+							hx-include="[data-filter]"
+							data-filter
 						/>
 					</div>
 				</div>
@@ -104,4 +109,47 @@ templ list(problems []Problem, last bool) {
 			</div>
 		</main>
 	}
+}
+
+templ rangeInput(name string, title string) {
+	<fieldset :disabled="!rated">
+		<label class="label">{ title }</label>
+		<div class="range-input" x-data="{min: '', max:''}">
+			<input
+				type="number"
+				class="input"
+				name={ "min_" + name }
+				x-model="min"
+				:max="max"
+				:class="{'is-danger': min !== '' && max !== '' && min > max }"
+				data-filter
+			/>
+			<input
+				type="number"
+				class="input"
+				name={ "max_" + name }
+				x-model="max"
+				:min="min"
+				:class="{'is-danger': min !== '' && max !== '' && min > max }"
+				data-filter
+			/>
+		</div>
+	</fieldset>
+}
+
+templ checkbox(name string, title string) {
+	<div class="checkboxes">
+		<label class="checkbox">
+			<input
+				type="checkbox"
+				name={ name }
+				hx-get="/?page=0"
+				hx-target="#problems"
+				hx-include="[data-filter]"
+				x-model="rated"
+				data-filter
+			/>
+			{ title }
+		</label>
+	</div>
 }
