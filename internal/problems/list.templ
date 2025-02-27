@@ -83,7 +83,7 @@ templ list(problems []Problem, last bool) {
 						<h1 class="title">Filters</h1>
 						<div class="filter-inputs" data-filter>
 							@ratedCheckbox("rated", "Rated")
-							@rangeInput("rating", "Rating")
+							@ratingRangeInput("rating", "Rating")
 						</div>
 					</div>
 				</div>
@@ -113,7 +113,7 @@ templ list(problems []Problem, last bool) {
 	}
 }
 
-templ rangeInput(name string, title string) {
+templ ratingRangeInput(name string, title string) {
 	<fieldset :disabled="!rated">
 		@ui.RangeInput(name, title, templ.Attributes{
 			"hx-get":     "/?page=0",
