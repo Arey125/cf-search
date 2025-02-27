@@ -59,8 +59,8 @@ templ partialProblemList(problems []Problem, page int, last bool) {
 	if !last {
 		<div
 			hx-get={ fmt.Sprintf("/?page=%d", page+1) }
+			hx-target="this"
 			hx-swap="outerHTML"
-			hx-include="[data-filter]"
 			hx-trigger="revealed"
 			class="card skeleton-card"
 		></div>
@@ -69,7 +69,11 @@ templ partialProblemList(problems []Problem, page int, last bool) {
 
 templ list(problems []Problem, last bool) {
 	@ui.Base() {
-		<main class="problems-main">
+		<main
+			class="problems-main"
+			hx-include="[data-filter]"
+			hx-target="#problems"
+		>
 			<div class="sidebar">
 				<div class="card">
 					<div
@@ -77,8 +81,8 @@ templ list(problems []Problem, last bool) {
 						x-data="{rated: false}"
 					>
 						<h1 class="title">Filters</h1>
-						<div class="filter-inputs">
-							@checkbox("rated", "Rated")
+						<div class="filter-inputs" data-filter>
+							@ratedCheckbox("rated", "Rated")
 							@rangeInput("rating", "Rating")
 						</div>
 					</div>
@@ -94,9 +98,7 @@ templ list(problems []Problem, last bool) {
 							class="input"
 							type="text"
 							hx-get="/?page=0"
-							hx-trigger="input changed delay:100ms, keyup[key=='Enter']"
-							hx-target="#problems"
-							hx-include="[data-filter]"
+							hx-trigger="input changed"
 							data-filter
 						/>
 					</div>
@@ -113,43 +115,16 @@ templ list(problems []Problem, last bool) {
 
 templ rangeInput(name string, title string) {
 	<fieldset :disabled="!rated">
-		<label class="label">{ title }</label>
-		<div class="range-input" x-data="{min: '', max:''}">
-			<input
-				type="number"
-				class="input"
-				name={ "min_" + name }
-				x-model="min"
-				:max="max"
-				:class="{'is-danger': min !== '' && max !== '' && min > max }"
-				data-filter
-			/>
-			<input
-				type="number"
-				class="input"
-				name={ "max_" + name }
-				x-model="max"
-				:min="min"
-				:class="{'is-danger': min !== '' && max !== '' && min > max }"
-				data-filter
-			/>
-		</div>
+		@ui.RangeInput(name, title, templ.Attributes{
+			"hx-get":     "/?page=0",
+			"hx-trigger": "input changed",
+		})
 	</fieldset>
 }
 
-templ checkbox(name string, title string) {
-	<div class="checkboxes">
-		<label class="checkbox">
-			<input
-				type="checkbox"
-				name={ name }
-				hx-get="/?page=0"
-				hx-target="#problems"
-				hx-include="[data-filter]"
-				x-model="rated"
-				data-filter
-			/>
-			{ title }
-		</label>
-	</div>
+templ ratedCheckbox(name string, title string) {
+	@ui.Checkbox(name, title, templ.Attributes{
+		"hx-get":  "/?page=0",
+		"x-model": "rated",
+	})
 }
